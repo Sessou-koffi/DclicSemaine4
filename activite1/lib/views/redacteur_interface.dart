@@ -50,7 +50,7 @@ class _RedacteurInterfaceState extends State<RedacteurInterface> {
   }
 
   // Fonction pour ajouter un rédacteur
-    // 21. Récupération des valeurs saisies via les contrôleurs de texte
+  // 21. Récupération des valeurs saisies via les contrôleurs de texte
   Future<void> _ajouterRedacteur() async {
     // 22. Vérification que les champs ne sont pas vides
     if (_nomController.text.trim().isEmpty ||
@@ -85,7 +85,9 @@ class _RedacteurInterfaceState extends State<RedacteurInterface> {
 
 
   // Fonction pour afficher la boîte de dialogue de modification
+    // 27. Déclencher l'ouverture de la boîte de dialogue (Appelée par l'icône Modifier du ListTile)
   void _ouvrirDialogueModification(Redacteur redacteur) {
+    // 28. Création de nouveaux contrôleurs pré-remplis avec les valeurs actuelles du rédacteur
     final TextEditingController modifNomController = TextEditingController(text: redacteur.nom);
     final TextEditingController modifPrenomController = TextEditingController(text: redacteur.prenom);
     final TextEditingController modifEmailController = TextEditingController(text: redacteur.email);
@@ -98,6 +100,7 @@ class _RedacteurInterfaceState extends State<RedacteurInterface> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // 29. Permettre à l'utilisateur de modifier les valeurs dans les champs
               TextField(controller: modifNomController, decoration: const InputDecoration(labelText: 'Nom')),
               TextField(controller: modifPrenomController, decoration: const InputDecoration(labelText: 'Prénom')),
               TextField(controller: modifEmailController, decoration: const InputDecoration(labelText: 'E-mail')),
@@ -106,19 +109,25 @@ class _RedacteurInterfaceState extends State<RedacteurInterface> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(context), // Ferme la boîte sans enregistrer
             child: const Text('Annuler'),
           ),
           ElevatedButton(
             onPressed: () async {
+              // 30. Création d'un objet avec l'ID existant et les nouvelles valeurs saisies
               final redacteurModifie = Redacteur(
-                id: redacteur.id,
+                id: redacteur.id, // ID conservé pour cibler la bonne ligne SQLite
                 nom: modifNomController.text.trim(),
                 prenom: modifPrenomController.text.trim(),
                 email: modifEmailController.text.trim(),
               );
+              
+              // Validation des changements dans la base de données
               await DatabaseManager.instance.updateRedacteur(redacteurModifie);
-              Navigator.pop(context);
+              
+              Navigator.pop(context); // Ferme la boîte de dialogue après la mise à jour
+              
+              // 31. Rafraîchir la liste à l'écran
               _chargerRedacteurs();
             },
             child: const Text('Enregistrer'),
@@ -127,6 +136,7 @@ class _RedacteurInterfaceState extends State<RedacteurInterface> {
       ),
     );
   }
+
 
   // Fonction pour valider la suppression après confirmation
   void _confirmerSuppression(int id) {
