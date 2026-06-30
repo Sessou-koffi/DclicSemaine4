@@ -50,31 +50,39 @@ class _RedacteurInterfaceState extends State<RedacteurInterface> {
   }
 
   // Fonction pour ajouter un rédacteur
+    // 21. Récupération des valeurs saisies via les contrôleurs de texte
   Future<void> _ajouterRedacteur() async {
+    // 22. Vérification que les champs ne sont pas vides
     if (_nomController.text.trim().isEmpty ||
         _prenomController.text.trim().isEmpty ||
         _emailController.text.trim().isEmpty) {
+      
+      // Notification visuelle si un champ est vide
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Veuillez remplir tous les champs')),
       );
       return;
     }
 
+    // 23. Création d'un objet Redacteur sans id (l'id est omis, donc nul par défaut)
     final nouveauRedacteur = Redacteur(
       nom: _nomController.text.trim(),
       prenom: _prenomController.text.trim(),
       email: _emailController.text.trim(),
     );
 
+    // 24. Appel de la méthode insertRedacteur de DatabaseManager
     await DatabaseManager.instance.insertRedacteur(nouveauRedacteur);
     
-    // Réinitialisation des champs après insertion
+    // 26. Vider les champs de texte si l'ajout s'est bien passé
     _nomController.clear();
     _prenomController.clear();
     _emailController.clear();
 
-    _chargerRedacteurs(); // Rafraîchit l'affichage
+    // 25. Rafraîchir la liste affichée après l'ajout (appelle setState en interne)
+    _chargerRedacteurs(); 
   }
+
 
   // Fonction pour afficher la boîte de dialogue de modification
   void _ouvrirDialogueModification(Redacteur redacteur) {
