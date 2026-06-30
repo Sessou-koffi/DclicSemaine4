@@ -85,7 +85,7 @@ class _RedacteurInterfaceState extends State<RedacteurInterface> {
 
 
   // Fonction pour afficher la boîte de dialogue de modification
-    // 27. Déclencher l'ouverture de la boîte de dialogue (Appelée par l'icône Modifier du ListTile)
+  // 27. Déclencher l'ouverture de la boîte de dialogue (Appelée par l'icône Modifier du ListTile)
   void _ouvrirDialogueModification(Redacteur redacteur) {
     // 28. Création de nouveaux contrôleurs pré-remplis avec les valeurs actuelles du rédacteur
     final TextEditingController modifNomController = TextEditingController(text: redacteur.nom);
@@ -139,21 +139,29 @@ class _RedacteurInterfaceState extends State<RedacteurInterface> {
 
 
   // Fonction pour valider la suppression après confirmation
+  // 32. Affichage d'une boîte de dialogue de confirmation (Appelée par l'icône Supprimer)
   void _confirmerSuppression(int id) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Confirmation'),
+        // 33. Demande explicite de confirmation à l'utilisateur
         content: const Text('Voulez-vous vraiment supprimer ce rédacteur ?'),
         actions: [
+          // Bouton d'annulation : ferme la boîte sans aucune action sur la BDD
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('Annuler'),
           ),
+          // 34. Si la réponse est positive (clic sur Supprimer)
           TextButton(
             onPressed: () async {
+              // Appel de la méthode de suppression selon l'ID unique
               await DatabaseManager.instance.deleteRedacteur(id);
-              Navigator.pop(context);
+              
+              Navigator.pop(context); // Fermeture de la boîte de dialogue
+              
+              // 35. Rechargement immédiat de la liste à l'écran
               _chargerRedacteurs();
             },
             child: const Text('Supprimer', style: TextStyle(color: Colors.red)),
@@ -162,6 +170,7 @@ class _RedacteurInterfaceState extends State<RedacteurInterface> {
       ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
